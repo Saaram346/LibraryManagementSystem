@@ -7,8 +7,10 @@ public class Main {
     public static void main(String[] args) {
         ConsoleInteraction consoleInteraction = new ConsoleInteraction();
         consoleInteraction.addBook(sc);
-        // Books book = new Books();
-        // System.out.println(book.bookName);
+        consoleInteraction.addBook(sc);
+        Books book = new Books();
+        book.displayAllBooks();
+        book.searchBookByName(sc);
 
     }
 }

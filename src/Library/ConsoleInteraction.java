@@ -82,9 +82,9 @@ public class ConsoleInteraction {
         Integer stock = getBookStock(sc);
 
         Books book = new Books();
-        book.addBookDetails(bookName, authorName, category, true, stock);
+        book.addBook(bookName, authorName, category, true, stock);
 
-        System.out.println("Book added successfully with details: ");
+        System.out.println("\nBook added successfully with details: ");
         System.out.println("Book Name: " + book.getBookName());
         System.out.println("Author Name: " + book.getAuthorName());
         System.out.println("Unique ID: " + book.getUniqueId());
