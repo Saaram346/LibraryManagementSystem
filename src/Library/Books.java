@@ -45,6 +45,8 @@ Books:
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Library.Constants.BOOKS;
+
 public class Books {
     public String bookName;
     public String authorName;
@@ -55,6 +57,7 @@ public class Books {
     public ArrayList<Members> borrowedByMembers;
 
     public static ArrayList<Books> booksList = new ArrayList<>();
+    ConsoleInteraction consoleInteraction;
     
     public Books() {}
 
@@ -123,6 +126,10 @@ public class Books {
 
     public void displayAllBooks() {
         System.out.println("\nBooks List:");
+        if(booksList.isEmpty()) {
+            System.out.println("No books available in the library.\n");
+            return;
+        }
         for(int i = 0; i < booksList.size(); i++) {
             System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock());
         }
@@ -147,7 +154,7 @@ public class Books {
     public void searchBookByUniqueId(Scanner sc) {
         Boolean flag = true;
         System.out.println("\nEnter a Book ID for search....");
-        String bookId = sc.nextLine();
+        String bookId = consoleInteraction.getUniqueIdOfBook(sc);
         System.out.println("Searching....");
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().contains(bookId)) {
@@ -162,7 +169,7 @@ public class Books {
 
     public void deleteBook(Scanner sc) {
         System.out.println("\nEnter a Book ID to delete the book....");
-        String uniqueId = sc.nextLine();
+        String uniqueId = consoleInteraction.getUniqueIdOfBook(sc);
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().equals(uniqueId)) {
                 System.out.println("Removing a book " + booksList.get(i).getBookName());
@@ -176,7 +183,7 @@ public class Books {
 
     public void updateBookDetails(Scanner sc) {
         System.out.println("\nEnter a Book ID to update the book....");
-        String uniqueId = sc.nextLine();
+        String uniqueId = consoleInteraction.getUniqueIdOfBook(sc);
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().equals(uniqueId)) {
                 System.out.println("Current " + booksList.get(i).getBookName());
@@ -212,7 +219,17 @@ public class Books {
         System.out.println("No results found.\n");
     }
 
-    
+    public Boolean validateBookDetails(BOOKS type, String content) {
+        for(Books book : booksList) {
+            if(type == BOOKS.BOOK_NAME && book.getBookName().equals(content)) {
+                return true;
+            }
+            else if(type == BOOKS.UNIQUE_ID && book.getUniqueId().equals(content)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     

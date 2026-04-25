@@ -1,8 +1,14 @@
 package Library;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class ConsoleInteraction {
+import Library.Constants.BOOKS;
+import Library.Constants.MEMBERS;
+
+public class ConsoleInteraction extends Books {
+
+    public Members member = new Members();
 
     public String getBookName(Scanner sc) {
         System.out.print("Enter the book name: ");
@@ -11,6 +17,9 @@ public class ConsoleInteraction {
             bookName = sc.nextLine();
             if(bookName.isEmpty()) {
                 System.out.print("Book name cannot be empty. Please enter again: ");
+            }
+            else if(validateBookDetails(BOOKS.BOOK_NAME, bookName)) {
+                System.out.print("Book name already exists. Please enter again: ");
             }
             else {
                 break;
@@ -91,6 +100,7 @@ public class ConsoleInteraction {
         System.out.println("Category: " + book.getCategory());
         System.out.println("Availability: " + book.getAvailability());
         System.out.println("Stock: " + book.getStock());
+        System.out.println("---------------------------------------------");
     }
 
     public String getMemberName(Scanner sc) {
@@ -100,6 +110,9 @@ public class ConsoleInteraction {
             memberName = sc.nextLine();
             if(memberName.isEmpty()) {
                 System.out.print("Member name cannot be empty. Please enter again: ");
+            }
+            else if(member.validateDetails(MEMBERS.MEMBER_NAME, memberName)) {
+                System.out.print("Member name already exists. Please enter again: ");
             }
             else {
                 break;
@@ -118,7 +131,10 @@ public class ConsoleInteraction {
             }
             else if(!phoneNumber.matches("\\d{10}")) {
                 System.out.print("Phone number should be 10 digits. Please enter again: ");
-            } 
+            }
+            else if(member.validateDetails(MEMBERS.PHONE_NUMBER, phoneNumber)) {
+                System.out.print("Phone number already exists. Please enter again: ");
+            }
             else {
                 break;
             }
@@ -160,6 +176,100 @@ public class ConsoleInteraction {
         System.out.println("Joining Date: " + member.getJoiningDate());
 
         return member;
+    }
+
+    public void displayAdminMenu(Scanner sc) {
+        try {
+            System.out.println("\nAdmin Menu:");
+            System.out.println("1. Add a new book");
+            System.out.println("2. Display all books");
+            System.out.println("3. Search a book by name");
+            System.out.println("4. Search a book by unique ID");
+            System.out.println("5. Update book details");
+            System.out.println("6. Delete a book");
+            System.out.println("7. Display all members");
+            System.out.println("8. Update member details");
+            System.out.println("9. Logout");
+
+            Integer userInput = sc.nextInt();
+            switch(userInput) {
+                case 1:
+                    addBook(sc);
+                    break;
+                case 2:
+                    displayAllBooks();
+                    break;
+                case 3:
+                    searchBookByName(sc);
+                    break;
+                case 4:
+                    searchBookByUniqueId(sc);
+                    break;
+                case 5:
+                    updateBookDetails(sc);
+                    break;
+                case 6:
+                    deleteBook(sc);
+                    break;
+                case 7:
+                    member.displayAllMembers();
+                    break;
+                case 8:
+                    member.updateMemberDetails(sc);
+                    break;
+                case 9:
+                    System.out.println("Logging out...");
+                    Main.enterTheApplication();
+                    return;
+                default:
+                    System.out.println("Invalid option. Please select a valid option from the menu.");
+            }
+        }
+        catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number corresponding to the menu options.");
+            sc.nextLine(); // Consume the invalid input
+        }
+        catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+        displayAdminMenu(sc); // Re-display the menu 
+    }
+    public void displayMemberMenu(Scanner sc) {
+        try {
+            System.out.println("\nMember Menu:");
+            System.out.println("1. Display all books");
+            System.out.println("2. Search a book by name");
+            System.out.println("3. Search a book by unique ID");
+            System.out.println("4. Logout");
+
+            System.out.print("\nEnter your choice: ");
+            Integer userInput = sc.nextInt();
+            sc.nextLine(); // Consume the newline character
+            switch(userInput) {
+                case 1:
+                    displayAllBooks();
+                    break;
+                case 2:
+                    searchBookByName(sc);
+                    break;
+                case 3:
+                    searchBookByUniqueId(sc);
+                    break;
+                case 4:
+                    System.out.println("Logging out...");
+                    Main.enterTheApplication();
+                    return;
+                default:
+                    System.out.println("Invalid option. Please select a valid option from the menu.");
+            }
+        }
+        catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number corresponding to the menu options.");
+        }
+        catch (Exception e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+        displayMemberMenu(sc); // Re-display the menu 
     }
 
 }

@@ -7,35 +7,36 @@ public class Main {
     static ConsoleInteraction consoleInteraction = new ConsoleInteraction();
     public static void main(String[] args) {
 
-        for(int i = 0; i < 5; i++) {
-            Books book = new Books();
-            book.addBook("Book" + (i+1), "Author" + (i+1), "Category" + (i+1), true, 10);
-        }
-
-        // ConsoleInteraction consoleInteraction = new ConsoleInteraction();
-        // consoleInteraction.addBook(sc);
-        // consoleInteraction.addBook(sc);
-        Books book = new Books();
-        book.displayAllBooks();
-        // book.searchBookByName(sc);
-        // book.updateBookDetails(sc);
-
-        Members member1 = new Members();
-        member1.addMember("Member1", "1234567890", "2024-01-01");
-        Members member2 = new Members();
-        member2.addMember("Member2", "0987654321", "2024-02-01");
-
-        member1.displayAllMembers();
-
-        Main main = new Main();
-        Members member = main.login(sc);
-
+        enterTheApplication();
 
     }
-    public Members login(Scanner sc) {
+
+    public static void enterTheApplication() {
+        Members member = login(sc);
+        if(Members.adminList.contains(member)) {
+            consoleInteraction.displayAdminMenu(sc);
+        }
+        else {
+            consoleInteraction.displayMemberMenu(sc);
+        }
+    }
+
+    public static Members login(Scanner sc) {
         Members member = null;
         System.out.println("Welcome to the Library Management System!");
-        if(userConfirmation(sc, "Already have an account?")) {
+        if(userConfirmation(sc, "Are you an Admin?")) {
+            System.out.print("Please enter your Admin ID to login: ");
+            String adminId = sc.nextLine();
+            System.out.print("Please enter your Admin password: ");
+            String adminPassword = sc.nextLine();
+            for(Members admin : Members.adminList) {
+                if(admin.getMemberId().equals(adminId) && admin.getPassword().equals(adminPassword)) {
+                    System.out.println("Admin login successful! Welcome, Admin!");
+                    return member = admin;
+                }
+            }
+        }
+        else if(userConfirmation(sc, "Already have an account?")) {
             System.out.print("Please enter your Member ID to login: ");
             String memberId = sc.nextLine();
             System.out.print("Please enter your phone number: ");

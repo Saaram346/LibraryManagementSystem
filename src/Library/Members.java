@@ -3,14 +3,25 @@ package Library;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import Library.Constants.MEMBERS;
+
 public class Members {
     public String memberName;
+    private String password;
     public String memberId;
     public String phoneNumber;
     public String joiningDate;
     public ArrayList<Books> borrowedBooks;
 
     public static ArrayList<Members> membersList = new ArrayList<>();
+    public static ArrayList<Members> adminList = new ArrayList<>();
+
+    public String getPassword() {
+        return this.password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getMemberName() {
         return this.memberName;
@@ -137,5 +148,20 @@ public class Members {
             System.out.println("No results found.\n");
         }
         return null;
+    }
+
+    public Boolean validateDetails(MEMBERS type,String content) {
+        for (Members member : membersList) {
+            if(type == MEMBERS.MEMBER_NAME && member.getMemberName().equals(content)) {
+                return true;
+            }
+            else if(type == MEMBERS.MEMBER_ID && member.getMemberId().equals(content)) {
+                return true;
+            }
+            else if(type == MEMBERS.PHONE_NUMBER && member.getPhoneNumber().equals(content)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
