@@ -33,8 +33,8 @@ Operations:
 
 Books:
     - Add Book (covered)
-    - Update Book
-    - Delete Book
+    - Update Book (covered)
+    - Delete Book (covered)
     - Display all books (covered)
         - Sorting actions
     - count management
@@ -52,18 +52,20 @@ public class Books {
     public String category;
     public Boolean availability;
     public Integer stock;
+    public ArrayList<Members> borrowedByMembers;
 
     public static ArrayList<Books> booksList = new ArrayList<>();
     
     public Books() {}
 
-    public Books(String bookName, String authorName, String uniqueId, String category, Boolean availability, Integer stock) {
-        this.bookName = bookName;
-        this.authorName = authorName;
-        this.uniqueId = uniqueId;
-        this.category = category;
-        this.availability = availability;
-        this.stock = stock;
+    public Books(String bookName, String authorName, String category, Boolean availability, Integer stock) {
+        setBookName(bookName);
+        setAuthorName(authorName);
+        setUniqueId("BOOKS" + System.currentTimeMillis() % 1_000_000_0);
+        setCategory(category);
+        setAvailability(availability);
+        setStock(stock);
+        booksList.add(this);
     }
 
     public void setBookName(String bookName) {
@@ -80,7 +82,7 @@ public class Books {
         return this.authorName;
     }
 
-    public void setUniqueId(String uniqueId) {
+    private void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
     public String getUniqueId() {
@@ -110,18 +112,17 @@ public class Books {
     }
 
     public void addBook(String bookName, String authorName, String category, Boolean availability, Integer stock) {
-        this.bookName = bookName;
-        this.authorName = authorName;
-        this.uniqueId = "BOOKS" + System.currentTimeMillis() % 1_000_000_0;
-        this.category = category;
-        this.availability = availability;
-        this.stock = stock;
+        setBookName(bookName);
+        setAuthorName(authorName);
+        setUniqueId("BOOKS" + System.currentTimeMillis() % 1_000_000_0);
+        setCategory(category);
+        setAvailability(availability);
+        setStock(stock);
         booksList.add(this);
     }
 
     public void displayAllBooks() {
-        System.out.println();
-        System.out.println("Books List:");
+        System.out.println("\nBooks List:");
         for(int i = 0; i < booksList.size(); i++) {
             System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock());
         }
@@ -129,7 +130,7 @@ public class Books {
 
     public void searchBookByName(Scanner sc) {
         Boolean flag = true;
-        System.out.println("Enter a book name for search....");
+        System.out.println("\nEnter a book name for search....");
         String searchedName = sc.nextLine();
         System.out.println("Searching....");
         for(int i = 0; i < booksList.size(); i++) {
@@ -139,13 +140,13 @@ public class Books {
             }
         }
         if(flag) {
-            System.out.println("No results found. Search with a different name.");
+            System.out.println("No results found. Search with a different name.\n");
         }
     }
 
     public void searchBookByUniqueId(Scanner sc) {
         Boolean flag = true;
-        System.out.println("Enter a Book ID for search....");
+        System.out.println("\nEnter a Book ID for search....");
         String bookId = sc.nextLine();
         System.out.println("Searching....");
         for(int i = 0; i < booksList.size(); i++) {
@@ -155,26 +156,63 @@ public class Books {
             }
         }
         if(flag) {
-            System.out.println("No results found. Search with a different name.");
+            System.out.println("No results found. Search with a different name.\n");
         }
     }
 
     public void deleteBook(Scanner sc) {
-        Boolean flag = true;
+        System.out.println("\nEnter a Book ID to delete the book....");
         String uniqueId = sc.nextLine();
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().equals(uniqueId)) {
                 System.out.println("Removing a book " + booksList.get(i).getBookName());
                 booksList.remove(i);
-                System.out.println("Book deleted successfully...");
-                flag = false;
-                break;
+                System.out.println("Book deleted successfully...\n");
+                return;
             }
         }
-        if(flag) {
-            System.out.println("No results found.");
-        }
+        System.out.println("No results found.\n");
     }
+
+    public void updateBookDetails(Scanner sc) {
+        System.out.println("\nEnter a Book ID to update the book....");
+        String uniqueId = sc.nextLine();
+        for(int i = 0; i < booksList.size(); i++) {
+            if(booksList.get(i).getUniqueId().equals(uniqueId)) {
+                System.out.println("Current " + booksList.get(i).getBookName());
+                System.out.println("Enter a updated book name or press enter to skip: ");
+                String updatedBookName = sc.nextLine();
+                if(!updatedBookName.isEmpty()) {
+                    booksList.get(i).setBookName(updatedBookName);
+                    System.out.println("Book Name updated successfully");
+                }
+                System.out.println("Enter a updated author name or press enter to skip: ");
+                String updatedAuthorName = sc.nextLine();
+                if(!updatedAuthorName.isEmpty()) {
+                    booksList.get(i).setAuthorName(updatedAuthorName);
+                    System.out.println("Author Name updated successfully");
+                }
+                System.out.println("Enter a updated category or press enter to skip: ");
+                String updatedCategory = sc.nextLine();
+                if(!updatedCategory.isEmpty()) {
+                    booksList.get(i).setCategory(updatedCategory);
+                    System.out.println("Category updated successfully");
+                }
+                System.out.println("Enter a updated stock or press enter to skip: ");
+                String updatedStock = sc.nextLine();
+                if(!updatedStock.isEmpty() && updatedStock.matches("\\d+")) {
+                    booksList.get(i).setStock(Integer.valueOf(updatedStock));
+                    System.out.println("Stock updated successfully");
+                }
+                System.out.println("Book details updated successfully with details: ");
+                System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock() + "\n");
+                return;
+            }
+        }
+        System.out.println("No results found.\n");
+    }
+
+    
 
 
     

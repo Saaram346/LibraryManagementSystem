@@ -93,4 +93,73 @@ public class ConsoleInteraction {
         System.out.println("Stock: " + book.getStock());
     }
 
+    public String getMemberName(Scanner sc) {
+        System.out.print("Enter the member name: ");
+        String memberName;
+        while(true) {
+            memberName = sc.nextLine();
+            if(memberName.isEmpty()) {
+                System.out.print("Member name cannot be empty. Please enter again: ");
+            }
+            else {
+                break;
+            }
+        }
+        return memberName;
+    }
+
+    public String getPhoneNumber(Scanner sc) {
+        System.out.print("Enter the phone number: ");
+        String phoneNumber;
+        while(true) {
+            phoneNumber = sc.nextLine();
+            if(phoneNumber.isEmpty()) {
+                System.out.print("Phone number cannot be empty. Please enter again: ");
+            }
+            else if(!phoneNumber.matches("\\d{10}")) {
+                System.out.print("Phone number should be 10 digits. Please enter again: ");
+            } 
+            else {
+                break;
+            }
+        }
+        return phoneNumber;
+    }
+
+    public String getJoiningDate(Scanner sc) {
+        System.out.print("Enter the joining date (YYYY-MM-DD): ");
+        String joiningDate;
+        while(true) {
+            joiningDate = sc.nextLine();
+            if(joiningDate.isEmpty()) {
+                System.out.print("Joining date cannot be empty. Please enter again: ");
+            }
+            else if(!joiningDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                System.out.print("Joining date should be in the format YYYY-MM-DD. Please enter again: ");
+            } 
+            else {
+                break;
+            }
+        }
+        return joiningDate;
+    }
+
+    public Members addMember(Scanner sc) {
+        System.out.println("Adding a new member...");
+        String memberName = getMemberName(sc);
+        String phoneNumber = getPhoneNumber(sc);
+        String joiningDate = getJoiningDate(sc); // add logic for auto update
+
+        Members member = new Members();
+        member.addMember(memberName, phoneNumber, joiningDate);
+
+        System.out.println("\nMember added successfully with details: ");
+        System.out.println("Member Name: " + member.getMemberName());
+        System.out.println("Member ID: " + member.getMemberId());
+        System.out.println("Phone Number: " + member.getPhoneNumber());
+        System.out.println("Joining Date: " + member.getJoiningDate());
+
+        return member;
+    }
+
 }
