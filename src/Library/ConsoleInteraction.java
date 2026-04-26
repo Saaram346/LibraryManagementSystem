@@ -116,6 +116,7 @@ public class ConsoleInteraction {
         Books book = new Books();
         book.addBook(bookName, authorName, category, true, stock);
 
+        System.out.println("---------------------------------------------");
         System.out.println("\nBook added successfully with details: ");
         System.out.println("Book Name: " + book.getBookName());
         System.out.println("Author Name: " + book.getAuthorName());
@@ -258,7 +259,8 @@ public class ConsoleInteraction {
 
     public void displayAdminMenu(Members member) {
         try {
-            System.out.println("\nAdmin Menu:");
+            System.out.println("\n---------------------------------------------");
+            System.out.println("Admin Menu:");
             System.out.println("1. Add a new book");
             System.out.println("2. Display all books");
             System.out.println("3. Search a book by name");
@@ -312,13 +314,15 @@ public class ConsoleInteraction {
                     break;
                 case 12:
                     System.out.println("Logging out...");
+                    System.out.println("---------------------------------------------\n");
                     Main.enterTheApplication();
                     return;
                 case 13:
                     System.out.println("Exiting the application...");
+                    System.out.println("---------------------------------------------\n");
                     return;
                 default:
-                    System.out.println("Invalid option. Please select a valid option from the menu.");
+                    System.out.println("Invalid option. Please select a valid option from the menu.\n");
             }
         }
         catch (InputMismatchException e) {
@@ -333,7 +337,8 @@ public class ConsoleInteraction {
     }
     public void displayMemberMenu(Members member) {
         try {
-            System.out.println("\nMember Menu:");
+            System.out.println("\n---------------------------------------------");
+            System.out.println("Member Menu:");
             System.out.println("1. Display all books");
             System.out.println("2. Search a book by name");
             System.out.println("3. Search a book by unique ID");
@@ -371,7 +376,7 @@ public class ConsoleInteraction {
                     System.exit(0);
                     return;
                 default:
-                    System.out.println("Invalid option. Please select a valid option from the menu.");
+                    System.out.println("Invalid option. Please select a valid option from the menu.\n");
             }
         }
         catch (InputMismatchException e) {
@@ -384,5 +389,4 @@ public class ConsoleInteraction {
         }
         displayMemberMenu(member); // Re-display the menu 
     }
-
 }

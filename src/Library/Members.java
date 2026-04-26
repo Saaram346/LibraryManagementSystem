@@ -82,6 +82,7 @@ public class Members extends ConsoleInteraction {
     }
 
     public void displayMemberDetails(Members member) {
+        System.out.println("\n---------------------------------------------");
         System.out.println("Member Name: " + member.getMemberName());
         System.out.println("Member ID: " + member.getMemberId());
         System.out.println("Phone Number: " + member.getPhoneNumber());
@@ -94,14 +95,17 @@ public class Members extends ConsoleInteraction {
         for(Books book : member.getReservedBooks()) {
             System.out.println("- " + book.getBookName() + " by " + book.getAuthorName());
         }
+        System.out.println("---------------------------------------------\n");
     }
 
     public void displayAllMembers() {
-        System.out.println("All Members:");
+        System.out.println("\n---------------------------------------------");
+        System.out.println("Members List:");
         for(Members member : membersList) {
             System.out.println("- " + member.getMemberName() + " (ID: " + member.getMemberId() + ")");
             System.out.println();
         }
+        System.out.println("---------------------------------------------\n");
     }
 
     public void updateMemberDetails() {
@@ -154,6 +158,7 @@ public class Members extends ConsoleInteraction {
         String memberId = getMemberIdFromConsole(true, false);
         System.out.println("Search results for member ID '" + memberId + "':");
         Boolean found = false;
+        System.out.println("\n---------------------------------------------");
         for(Members member : membersList) {
             if(member.getMemberId().equalsIgnoreCase(memberId)) {
                 displayMemberDetails(member);
@@ -164,6 +169,7 @@ public class Members extends ConsoleInteraction {
         if(!found) {
             System.out.println("No results found.\n");
         }
+        System.out.println("---------------------------------------------\n");
         return null;
     }
 

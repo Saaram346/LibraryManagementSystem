@@ -6,7 +6,8 @@ public class Main {
     public static Scanner sc = new Scanner(System.in);
     public static Books book = new Books();
     public static Members member = new Members();
-    static ConsoleInteraction consoleInteraction = new ConsoleInteraction(book, member);
+    public static ConsoleInteraction consoleInteraction = new ConsoleInteraction(book, member);
+    public static String dataFilePath = System.getProperty("user.dir") + "/src/Library/DataStore/";
     public static void main(String[] args) {
 
         ConsoleInteraction.sc = sc;
@@ -29,6 +30,7 @@ public class Main {
 
     public static Members login() {
         Members member = null;
+        System.out.println("\n---------------------------------------------");
         System.out.println("Welcome to the Library Management System!");
         if(ConsoleInteraction.userConfirmation("Are you an Admin?")) {
             System.out.print("Please enter your Admin ID to login: ");
@@ -68,22 +70,21 @@ public class Main {
 
     public static void restoreData() {
         StoreData storeData = new StoreData(book, member);
-        storeData.restoreBooksData();
-        storeData.restoreMembersData();
-        storeData.restoreBorrowedData();
-        storeData.restoreReservedData();
-        storeData.restoreAdminData();
+        storeData.restoreBooksData(dataFilePath);
+        storeData.restoreMembersData(dataFilePath);
+        storeData.restoreBorrowedData(dataFilePath);
+        storeData.restoreReservedData(dataFilePath);
+        storeData.restoreAdminData(dataFilePath);
         System.out.println("Data restoration complete.");
     }
 
     public static void storeData() {
         StoreData storeData = new StoreData(book, member);
-        storeData.storeBooksData();
-        storeData.storeMembersData();
-        storeData.storeBorrowedData();
-        storeData.storeReservedData();
-        storeData.storeAdminData();
+        storeData.storeBooksData(dataFilePath);
+        storeData.storeMembersData(dataFilePath);
+        storeData.storeBorrowedData(dataFilePath);
+        storeData.storeReservedData(dataFilePath);
+        storeData.storeAdminData(dataFilePath);
         System.out.println("Data storage complete.");
     }
 }
-

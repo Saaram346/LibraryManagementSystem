@@ -165,6 +165,7 @@ public class Books extends ConsoleInteraction {
     }
 
     public void displayAllBooks() {
+        System.out.println("\n---------------------------------------------");
         System.out.println("\nBooks List:");
         if(booksList.isEmpty()) {
             System.out.println("No books available in the library.\n");
@@ -173,6 +174,7 @@ public class Books extends ConsoleInteraction {
         for(int i = 0; i < booksList.size(); i++) {
             System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock());
         }
+        System.out.println("---------------------------------------------\n");
     }
 
     public void searchBookByName() {
@@ -181,6 +183,7 @@ public class Books extends ConsoleInteraction {
             System.out.println("\nEnter a book name for search....");
             String searchedName = getBookNameFromConsole(false, true);
             System.out.println("Searching....");
+            System.out.println("\n---------------------------------------------");
             for(int i = 0; i < booksList.size(); i++) {
                 if(booksList.get(i).getBookName().contains(searchedName)) {
                     System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock());
@@ -193,6 +196,7 @@ public class Books extends ConsoleInteraction {
             else {
                 break;
             }
+            System.out.println("---------------------------------------------\n");
         }
     }
 
@@ -201,6 +205,7 @@ public class Books extends ConsoleInteraction {
         System.out.println("\nEnter a Book ID for search....");
         String bookId = getUniqueIdOfBookFromConsole();
         System.out.println("Searching....");
+        System.out.println("\n---------------------------------------------");
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().contains(bookId)) {
                 System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock());
@@ -210,6 +215,7 @@ public class Books extends ConsoleInteraction {
         if(flag) {
             System.out.println("No results found. Search with a different name.\n");
         }
+        System.out.println("---------------------------------------------\n");
     }
 
     public Books getBookByUniqueId(String uniqueId) {
@@ -265,8 +271,10 @@ public class Books extends ConsoleInteraction {
                     booksList.get(i).setStock(updatedStock);
                     System.out.println("Stock updated successfully");
                 }
+                System.out.println("\n---------------------------------------------");
                 System.out.println("Book details updated successfully with details: ");
                 System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock() + "\n");
+                System.out.println("---------------------------------------------\n");
                 return;
             }
         }
