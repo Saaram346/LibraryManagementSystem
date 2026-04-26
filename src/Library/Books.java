@@ -54,7 +54,11 @@ public class Books {
     public String category;
     public Boolean availability;
     public Integer stock;
+    public String borrowedDate;
+    public String dueDate;
+    public String returnedDate;
     public ArrayList<Members> borrowedByMembers;
+    public ArrayList<Members> reservedByMembers;
 
     public static ArrayList<Books> booksList = new ArrayList<>();
     ConsoleInteraction consoleInteraction;
@@ -69,6 +73,8 @@ public class Books {
         setAvailability(availability);
         setStock(stock);
         booksList.add(this);
+        this.borrowedByMembers = new ArrayList<>();
+        this.reservedByMembers = new ArrayList<>();
     }
 
     public void setBookName(String bookName) {
@@ -114,6 +120,41 @@ public class Books {
         return this.stock;
     }
 
+    public void setBorrowedByMembers(Members member) {
+        this.borrowedByMembers.add(member);
+    }
+    public void removeBorrowedByMembers(Members member) {
+        this.borrowedByMembers.remove(member);
+    }
+
+    public void addReservedByMembers(Members member) {
+        this.reservedByMembers.add(member);
+    }
+    public ArrayList<Members> getBorrowedByMembers() {
+        return this.borrowedByMembers;
+    }
+
+    public void setBorrowedDate(String borrowedDate) {
+        this.borrowedDate = borrowedDate;
+    }
+    public String getBorrowedDate() {
+        return this.borrowedDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+    public String getDueDate() {
+        return this.dueDate;
+    }
+
+    public void setReturnedDate(String returnedDate) {
+        this.returnedDate = returnedDate;
+    }
+    public String getReturnedDate() {
+        return this.returnedDate;
+    }
+
     public void addBook(String bookName, String authorName, String category, Boolean availability, Integer stock) {
         setBookName(bookName);
         setAuthorName(authorName);
@@ -122,6 +163,8 @@ public class Books {
         setAvailability(availability);
         setStock(stock);
         booksList.add(this);
+        this.borrowedByMembers = new ArrayList<>();
+        this.reservedByMembers = new ArrayList<>();
     }
 
     public void displayAllBooks() {
@@ -231,7 +274,7 @@ public class Books {
         return false;
     }
 
-
+    
     
 }
 

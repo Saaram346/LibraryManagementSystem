@@ -8,7 +8,21 @@ import Library.Constants.MEMBERS;
 
 public class ConsoleInteraction extends Books {
 
-    public Members member = new Members();
+    public Members member;
+    public Books book;
+
+    public ConsoleInteraction() {}
+    public ConsoleInteraction(Members member, Books book) {
+        this.member = member;
+        this.book = book;
+    }
+
+    public static Boolean userConfirmation(Scanner sc, String action) {
+        System.out.println(action + " (Y/N)");
+        String confirmation = sc.next();
+        sc.nextLine(); // Consume the newline character
+        return confirmation.equalsIgnoreCase("Y");
+    }
 
     public String getBookName(Scanner sc) {
         System.out.print("Enter the book name: ");
@@ -160,14 +174,12 @@ public class ConsoleInteraction extends Books {
         return joiningDate;
     }
 
-    public Members addMember(Scanner sc) {
+    public Members addMember(Scanner sc, Members member) {
         System.out.println("Adding a new member...");
         String memberName = getMemberName(sc);
         String phoneNumber = getPhoneNumber(sc);
-        String joiningDate = getJoiningDate(sc); // add logic for auto update
 
-        Members member = new Members();
-        member.addMember(memberName, phoneNumber, joiningDate);
+        member.addMember(memberName, phoneNumber);
 
         System.out.println("\nMember added successfully with details: ");
         System.out.println("Member Name: " + member.getMemberName());
@@ -178,7 +190,7 @@ public class ConsoleInteraction extends Books {
         return member;
     }
 
-    public void displayAdminMenu(Scanner sc) {
+    public void displayAdminMenu(Scanner sc, Members member) {
         try {
             System.out.println("\nAdmin Menu:");
             System.out.println("1. Add a new book");
@@ -188,10 +200,13 @@ public class ConsoleInteraction extends Books {
             System.out.println("5. Update book details");
             System.out.println("6. Delete a book");
             System.out.println("7. Display all members");
-            System.out.println("8. Update member details");
-            System.out.println("9. Logout");
+            System.out.println("8. Search member details using member ID");
+            System.out.println("9. Update member details");
+            System.out.println("10. Logout");
 
+            System.out.println("\nEnter your choice: ");
             Integer userInput = sc.nextInt();
+            sc.nextLine(); // Consume the newline character
             switch(userInput) {
                 case 1:
                     addBook(sc);
@@ -215,9 +230,12 @@ public class ConsoleInteraction extends Books {
                     member.displayAllMembers();
                     break;
                 case 8:
-                    member.updateMemberDetails(sc);
+                    member.searchMemberByMemberId(sc);
                     break;
                 case 9:
+                    member.updateMemberDetails(sc);
+                    break;
+                case 10:
                     System.out.println("Logging out...");
                     Main.enterTheApplication();
                     return;
@@ -230,17 +248,20 @@ public class ConsoleInteraction extends Books {
             sc.nextLine(); // Consume the invalid input
         }
         catch (Exception e) {
+            System.out.println(e);
             System.out.println("An error occurred: " + e.getMessage());
         }
-        displayAdminMenu(sc); // Re-display the menu 
+        displayAdminMenu(sc, member); // Re-display the menu 
     }
-    public void displayMemberMenu(Scanner sc) {
+    public void displayMemberMenu(Scanner sc, Members member) {
         try {
             System.out.println("\nMember Menu:");
             System.out.println("1. Display all books");
             System.out.println("2. Search a book by name");
             System.out.println("3. Search a book by unique ID");
-            System.out.println("4. Logout");
+            System.out.println("4. Borrow a book");
+            System.out.println("5. Return a book");
+            System.out.println("6. Logout");
 
             System.out.print("\nEnter your choice: ");
             Integer userInput = sc.nextInt();
@@ -256,6 +277,12 @@ public class ConsoleInteraction extends Books {
                     searchBookByUniqueId(sc);
                     break;
                 case 4:
+                    member.borrowBook(sc);
+                    break;
+                case 5:
+                    member.returnBook(sc);
+                    break;
+                case 6:
                     System.out.println("Logging out...");
                     Main.enterTheApplication();
                     return;
@@ -269,7 +296,7 @@ public class ConsoleInteraction extends Books {
         catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
         }
-        displayMemberMenu(sc); // Re-display the menu 
+        displayMemberMenu(sc, member); // Re-display the menu 
     }
 
 }

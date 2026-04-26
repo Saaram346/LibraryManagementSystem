@@ -12,6 +12,9 @@ public class Members {
     public String phoneNumber;
     public String joiningDate;
     public ArrayList<Books> borrowedBooks;
+    public ArrayList<Books> reservedBooks;
+
+    ConsoleInteraction consoleInteraction = new ConsoleInteraction();
 
     public static ArrayList<Members> membersList = new ArrayList<>();
     public static ArrayList<Members> adminList = new ArrayList<>();
@@ -33,7 +36,7 @@ public class Members {
     public String getMemberId() {
         return this.memberId;
     }
-    private void setMemberId(String memberId) {
+    public void setMemberId(String memberId) {
         this.memberId = memberId;
     }
 
@@ -47,8 +50,8 @@ public class Members {
     public String getJoiningDate() {
         return this.joiningDate;
     }
-    public void setJoiningDate(String joiningDate) {
-        this.joiningDate = joiningDate;
+    public void setJoiningDate() {
+        this.joiningDate = java.time.LocalDate.now().toString();
     }
 
     public void addBorrowedBook(Books book) {
@@ -61,11 +64,20 @@ public class Members {
         return this.borrowedBooks;
     }
 
-    public void addMember(String memberName, String phoneNumber, String joiningDate) {
+    public void addReservedBook(Books book) {
+        this.reservedBooks.add(book);
+    }
+    public ArrayList<Books> getReservedBooks() {
+        return this.reservedBooks;
+    }
+
+    public void addMember(String memberName, String phoneNumber) {
         setMemberName(memberName);
         setPhoneNumber(phoneNumber);
-        setJoiningDate(joiningDate);
+        setJoiningDate();
         setMemberId("MEMBER" + System.currentTimeMillis() % 1_000_000_0);
+        this.borrowedBooks = new ArrayList<>();
+        this.reservedBooks = new ArrayList<>();
         membersList.add(this);
     }
 
@@ -78,12 +90,17 @@ public class Members {
         for(Books book : member.getBorrowedBooks()) {
             System.out.println("- " + book.getBookName() + " by " + book.getAuthorName());
         }
+        System.out.println("Reserved Books: ");
+        for(Books book : member.getReservedBooks()) {
+            System.out.println("- " + book.getBookName() + " by " + book.getAuthorName());
+        }
     }
 
     public void displayAllMembers() {
         System.out.println("All Members:");
         for(Members member : membersList) {
             System.out.println("- " + member.getMemberName() + " (ID: " + member.getMemberId() + ")");
+            System.out.println();
         }
     }
 
@@ -104,12 +121,12 @@ public class Members {
                     membersList.get(i).setPhoneNumber(updatedPhoneNumber);
                     System.out.println("Phone Number updated successfully");
                 }
-                System.out.println("Enter a new joining date or press enter to skip: ");
-                String updatedJoiningDate = sc.nextLine();
-                if(!updatedJoiningDate.isEmpty()) {
-                    membersList.get(i).setJoiningDate(updatedJoiningDate);
-                    System.out.println("Joining Date updated successfully");
-                }
+                // System.out.println("Enter a new joining date or press enter to skip: ");
+                // String updatedJoiningDate = sc.nextLine();
+                // if(!updatedJoiningDate.isEmpty()) {
+                //     membersList.get(i).setJoiningDate(updatedJoiningDate);
+                //     System.out.println("Joining Date updated successfully");
+                // }
                 System.out.println("Member details updated successfully with details: ");
                 displayMemberDetails(membersList.get(i));
                 return;
@@ -163,5 +180,49 @@ public class Members {
             }
         }
         return false;
+    }
+
+    public void borrowBook(Scanner sc) {
+        String bookId = consoleInteraction.getUniqueIdOfBook(sc);
+        for(Books book : Books.booksList) {
+            if(book.getUniqueId().equals(bookId)) {
+                if(book.getAvailability()) {
+                    book.setBorrowedDate(java.time.LocalDate.now().toString());
+                    book.setDueDate(java.time.LocalDate.now().plusWeeks(2).toString());
+                    addReservedBook(book);
+                    addBorrowedBook(book);
+                    book.setBorrowedByMembers(this);
+                    book.addReservedByMembers(this);
+                    book.setStock(book.getStock() - 1);
+                    System.out.println("You have successfully borrowed '" + book.getBookName() + "'. Please return it by " + book.getDueDate() + ".");
+                }
+                else {
+                    System.out.println("Sorry, '" + book.getBookName() + "' is currently unavailable.");
+                }
+                return;
+            }
+        }
+        System.out.println("Book ID not found.");
+        if(ConsoleInteraction.userConfirmation(sc, "Do you want to search for another book?")) {
+            borrowBook(sc);
+        }
+    }
+
+    public void returnBook(Scanner sc) {
+        String bookId = consoleInteraction.getUniqueIdOfBook(sc);
+        for(Books book : borrowedBooks) {
+            if(book.getUniqueId().equals(bookId)) {
+                book.setReturnedDate(java.time.LocalDate.now().toString());
+                removeBorrowedBook(book);
+                book.setStock(book.getStock() + 1);
+                book.removeBorrowedByMembers(this);
+                System.out.println("You have successfully returned '" + book.getBookName() + "'. Thank you!");
+                return;
+            }
+        }
+        System.out.println("You have not borrowed a book with that ID.");
+        if(ConsoleInteraction.userConfirmation(sc, "Do you want to search for another book?")) {
+            returnBook(sc);
+        }
     }
 }

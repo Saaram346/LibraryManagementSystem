@@ -4,8 +4,17 @@ import java.util.Scanner;
 
 public class Main {
     public static Scanner sc = new Scanner(System.in);
-    static ConsoleInteraction consoleInteraction = new ConsoleInteraction();
+    public static Books book = new Books();
+    public static Members member = new Members();
+    static ConsoleInteraction consoleInteraction = new ConsoleInteraction(member, book);
     public static void main(String[] args) {
+
+        Members admin = new Members();
+        admin.setMemberName("Admin");
+        admin.setMemberId("admin001");
+        admin.setPassword("adminpass");
+        admin.setPhoneNumber("1234567890");
+        Members.adminList.add(admin);
 
         enterTheApplication();
 
@@ -14,17 +23,17 @@ public class Main {
     public static void enterTheApplication() {
         Members member = login(sc);
         if(Members.adminList.contains(member)) {
-            consoleInteraction.displayAdminMenu(sc);
+            consoleInteraction.displayAdminMenu(sc, member);
         }
         else {
-            consoleInteraction.displayMemberMenu(sc);
+            consoleInteraction.displayMemberMenu(sc, member);
         }
     }
 
     public static Members login(Scanner sc) {
         Members member = null;
         System.out.println("Welcome to the Library Management System!");
-        if(userConfirmation(sc, "Are you an Admin?")) {
+        if(ConsoleInteraction.userConfirmation(sc, "Are you an Admin?")) {
             System.out.print("Please enter your Admin ID to login: ");
             String adminId = sc.nextLine();
             System.out.print("Please enter your Admin password: ");
@@ -36,7 +45,7 @@ public class Main {
                 }
             }
         }
-        else if(userConfirmation(sc, "Already have an account?")) {
+        else if(ConsoleInteraction.userConfirmation(sc, "Already have an account?")) {
             System.out.print("Please enter your Member ID to login: ");
             String memberId = sc.nextLine();
             System.out.print("Please enter your phone number: ");
@@ -50,19 +59,14 @@ public class Main {
             System.out.println("Invalid Member ID or phone number.");
         } 
         else {
-            return member = consoleInteraction.addMember(sc);
+            member = new Members();
+            return member = consoleInteraction.addMember(sc, member);
         }
         if(member == null) {
             System.out.println("Login failed. Please try again.");
             login(sc);
         }
         return member;
-    }
-    public static Boolean userConfirmation(Scanner sc, String action) {
-        System.out.println(action + " (Y/N)");
-        String confirmation = sc.next();
-        sc.nextLine(); // Consume the newline character
-        return confirmation.equalsIgnoreCase("Y");
     }
 }
 
