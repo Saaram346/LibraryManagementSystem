@@ -6,34 +6,31 @@ public class Main {
     public static Scanner sc = new Scanner(System.in);
     public static Books book = new Books();
     public static Members member = new Members();
-    static ConsoleInteraction consoleInteraction = new ConsoleInteraction(member, book);
+    static ConsoleInteraction consoleInteraction = new ConsoleInteraction(book, member);
     public static void main(String[] args) {
 
-        Members admin = new Members();
-        admin.setMemberName("Admin");
-        admin.setMemberId("admin001");
-        admin.setPassword("adminpass");
-        admin.setPhoneNumber("1234567890");
-        Members.adminList.add(admin);
-
+        ConsoleInteraction.sc = sc;
+        restoreData();
         enterTheApplication();
+        storeData();
+        System.exit(0);
 
     }
 
     public static void enterTheApplication() {
-        Members member = login(sc);
+        Members member = login();
         if(Members.adminList.contains(member)) {
-            consoleInteraction.displayAdminMenu(sc, member);
+            consoleInteraction.displayAdminMenu(member);
         }
         else {
-            consoleInteraction.displayMemberMenu(sc, member);
+            consoleInteraction.displayMemberMenu(member);
         }
     }
 
-    public static Members login(Scanner sc) {
+    public static Members login() {
         Members member = null;
         System.out.println("Welcome to the Library Management System!");
-        if(ConsoleInteraction.userConfirmation(sc, "Are you an Admin?")) {
+        if(ConsoleInteraction.userConfirmation("Are you an Admin?")) {
             System.out.print("Please enter your Admin ID to login: ");
             String adminId = sc.nextLine();
             System.out.print("Please enter your Admin password: ");
@@ -45,7 +42,7 @@ public class Main {
                 }
             }
         }
-        else if(ConsoleInteraction.userConfirmation(sc, "Already have an account?")) {
+        else if(ConsoleInteraction.userConfirmation("Already have an account?")) {
             System.out.print("Please enter your Member ID to login: ");
             String memberId = sc.nextLine();
             System.out.print("Please enter your phone number: ");
@@ -60,13 +57,33 @@ public class Main {
         } 
         else {
             member = new Members();
-            return member = consoleInteraction.addMember(sc, member);
+            return member = consoleInteraction.addMemberFromConsole(member);
         }
         if(member == null) {
             System.out.println("Login failed. Please try again.");
-            login(sc);
+            login();
         }
         return member;
+    }
+
+    public static void restoreData() {
+        StoreData storeData = new StoreData(book, member);
+        storeData.restoreBooksData();
+        storeData.restoreMembersData();
+        storeData.restoreBorrowedData();
+        storeData.restoreReservedData();
+        storeData.restoreAdminData();
+        System.out.println("Data restoration complete.");
+    }
+
+    public static void storeData() {
+        StoreData storeData = new StoreData(book, member);
+        storeData.storeBooksData();
+        storeData.storeMembersData();
+        storeData.storeBorrowedData();
+        storeData.storeReservedData();
+        storeData.storeAdminData();
+        System.out.println("Data storage complete.");
     }
 }
 

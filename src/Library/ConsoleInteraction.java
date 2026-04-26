@@ -6,33 +6,34 @@ import java.util.Scanner;
 import Library.Constants.BOOKS;
 import Library.Constants.MEMBERS;
 
-public class ConsoleInteraction extends Books {
+public class ConsoleInteraction {
 
     public Members member;
     public Books book;
+    public static Scanner sc;
 
     public ConsoleInteraction() {}
-    public ConsoleInteraction(Members member, Books book) {
+    public ConsoleInteraction(Books book, Members member) {
         this.member = member;
         this.book = book;
     }
 
-    public static Boolean userConfirmation(Scanner sc, String action) {
+    public static Boolean userConfirmation(String action) {
         System.out.println(action + " (Y/N)");
         String confirmation = sc.next();
         sc.nextLine(); // Consume the newline character
         return confirmation.equalsIgnoreCase("Y");
     }
 
-    public String getBookName(Scanner sc) {
+    public String getBookNameFromConsole(Boolean isValidate, Boolean emptyCheck) {
         System.out.print("Enter the book name: ");
         String bookName;
         while(true) {
             bookName = sc.nextLine();
-            if(bookName.isEmpty()) {
+            if(emptyCheck && bookName.isEmpty()) {
                 System.out.print("Book name cannot be empty. Please enter again: ");
             }
-            else if(validateBookDetails(BOOKS.BOOK_NAME, bookName)) {
+            else if(isValidate && book.validateBookDetails(BOOKS.BOOK_NAME, bookName)) {
                 System.out.print("Book name already exists. Please enter again: ");
             }
             else {
@@ -42,12 +43,12 @@ public class ConsoleInteraction extends Books {
         return bookName;
     }
 
-    public String getAuthorName(Scanner sc) {
+    public String getAuthorNameFromConsole(Boolean emptyCheck) {
         System.out.print("Enter the author name: ");
         String authorName;
         while(true) {
             authorName = sc.nextLine();
-            if(authorName.isEmpty()) {
+            if(emptyCheck && authorName.isEmpty()) {
                 System.out.print("Author name cannot be empty. Please enter again: ");
             }
             else {
@@ -57,7 +58,7 @@ public class ConsoleInteraction extends Books {
         return authorName;
     }
 
-    public String getUniqueIdOfBook(Scanner sc) {
+    public String getUniqueIdOfBookFromConsole() {
         System.out.print("Enter the unique ID: ");
         String uniqueId;
         while(true) {
@@ -75,12 +76,12 @@ public class ConsoleInteraction extends Books {
         return uniqueId;
     }
 
-    public String getBookCategory(Scanner sc) {
+    public String getBookCategoryFromConsole(Boolean emptyCheck) {
         System.out.print("Enter the category: ");
         String category;
         while(true) {
             category = sc.nextLine();
-            if(category.isEmpty()) {
+            if(emptyCheck && category.isEmpty()) {
                 System.out.print("Category cannot be empty. Please enter again: ");
             }
             else {
@@ -90,19 +91,27 @@ public class ConsoleInteraction extends Books {
         return category;
     }
 
-    public Integer getBookStock(Scanner sc) {
+    public Integer getBookStockFromConsole() {
         System.out.print("Enter the stock quantity: ");
-        Integer stock = sc.nextInt();
-        sc.nextLine(); // Consume the newline character
+        Integer stock = null;
+        try {
+            stock = sc.nextInt();
+            sc.nextLine(); // Consume the newline character
+        } 
+        catch (InputMismatchException e) {
+            sc.nextLine(); // Consume the newline character
+            System.out.println("Invalid input. Please enter a number.");
+            getBookStockFromConsole();
+        }
         return stock;
     }
 
-    public void addBook(Scanner sc) {
+    public void addBookFromConsole() {
         System.out.println("Adding a new book...");
-        String bookName = getBookName(sc);
-        String authorName = getAuthorName(sc);
-        String category = getBookCategory(sc);
-        Integer stock = getBookStock(sc);
+        String bookName = getBookNameFromConsole(true, true);
+        String authorName = getAuthorNameFromConsole(true);
+        String category = getBookCategoryFromConsole(true);
+        Integer stock = getBookStockFromConsole();
 
         Books book = new Books();
         book.addBook(bookName, authorName, category, true, stock);
@@ -117,15 +126,15 @@ public class ConsoleInteraction extends Books {
         System.out.println("---------------------------------------------");
     }
 
-    public String getMemberName(Scanner sc) {
+    public String getMemberNameFromConsole(Boolean emptyCheck, Boolean isValidate) {
         System.out.print("Enter the member name: ");
         String memberName;
         while(true) {
             memberName = sc.nextLine();
-            if(memberName.isEmpty()) {
+            if(emptyCheck && memberName.isEmpty()) {
                 System.out.print("Member name cannot be empty. Please enter again: ");
             }
-            else if(member.validateDetails(MEMBERS.MEMBER_NAME, memberName)) {
+            else if(isValidate && member.validateDetails(MEMBERS.MEMBER_NAME, memberName)) {
                 System.out.print("Member name already exists. Please enter again: ");
             }
             else {
@@ -135,18 +144,36 @@ public class ConsoleInteraction extends Books {
         return memberName;
     }
 
-    public String getPhoneNumber(Scanner sc) {
+    public String getMemberIdFromConsole(Boolean emptyCheck, Boolean isValidate) {
+        System.out.print("Enter the member ID: ");
+        String memberId;
+        while(true) {
+            memberId = sc.nextLine();
+            if(emptyCheck && memberId.isEmpty()) {
+                System.out.print("Member ID cannot be empty. Please enter again: ");
+            }
+            else if(isValidate && member.validateDetails(MEMBERS.MEMBER_ID, memberId)) {
+                System.out.print("Member ID already exists. Please enter again: ");
+            }
+            else {
+                break;
+            }
+        }
+        return memberId;
+    }
+
+    public String getPhoneNumberFromConsole(Boolean emptyCheck, Boolean isValidate) {
         System.out.print("Enter the phone number: ");
         String phoneNumber;
         while(true) {
             phoneNumber = sc.nextLine();
-            if(phoneNumber.isEmpty()) {
+            if(emptyCheck && phoneNumber.isEmpty()) {
                 System.out.print("Phone number cannot be empty. Please enter again: ");
             }
             else if(!phoneNumber.matches("\\d{10}")) {
                 System.out.print("Phone number should be 10 digits. Please enter again: ");
             }
-            else if(member.validateDetails(MEMBERS.PHONE_NUMBER, phoneNumber)) {
+            else if(isValidate && member.validateDetails(MEMBERS.PHONE_NUMBER, phoneNumber)) {
                 System.out.print("Phone number already exists. Please enter again: ");
             }
             else {
@@ -156,7 +183,7 @@ public class ConsoleInteraction extends Books {
         return phoneNumber;
     }
 
-    public String getJoiningDate(Scanner sc) {
+    public String getJoiningDate() {
         System.out.print("Enter the joining date (YYYY-MM-DD): ");
         String joiningDate;
         while(true) {
@@ -174,10 +201,10 @@ public class ConsoleInteraction extends Books {
         return joiningDate;
     }
 
-    public Members addMember(Scanner sc, Members member) {
+    public Members addMemberFromConsole(Members member) {
         System.out.println("Adding a new member...");
-        String memberName = getMemberName(sc);
-        String phoneNumber = getPhoneNumber(sc);
+        String memberName = getMemberNameFromConsole(true, true);
+        String phoneNumber = getPhoneNumberFromConsole(true, true);
 
         member.addMember(memberName, phoneNumber);
 
@@ -190,7 +217,46 @@ public class ConsoleInteraction extends Books {
         return member;
     }
 
-    public void displayAdminMenu(Scanner sc, Members member) {
+    public void addAdminFromConsole() {
+        System.out.println("Adding a new admin...");
+        String memberName = getMemberNameFromConsole(true, true);
+        String phoneNumber = getPhoneNumberFromConsole(true, true);
+
+        Members admin = new Members();
+        admin.addAdmin(memberName, phoneNumber, getPasswordFromConsole());
+
+        System.out.println("\nAdmin added successfully with details: ");
+        System.out.println("Admin Name: " + admin.getMemberName());
+        System.out.println("Admin ID: " + admin.getMemberId());
+        System.out.println("Phone Number: " + admin.getPhoneNumber());
+        System.out.println("Joining Date: " + admin.getJoiningDate());
+    }
+
+    public void removeAdminFromConsole() {
+        System.out.println("Removing an admin...");
+        Members admin = new Members();
+        admin.removeAdmin();
+    }
+
+    public String getPasswordFromConsole() {
+        System.out.print("Enter the password: ");
+        String password;
+        while(true) {
+            password = sc.nextLine();
+            if(password.isEmpty()) {
+                System.out.print("Password cannot be empty. Please enter again: ");
+            }
+            else if(password.length() < 6) {
+                System.out.print("Password should be at least 6 characters long. Please enter again: ");
+            }
+            else {
+                break;
+            }
+        }
+        return password;
+    }
+
+    public void displayAdminMenu(Members member) {
         try {
             System.out.println("\nAdmin Menu:");
             System.out.println("1. Add a new book");
@@ -202,42 +268,54 @@ public class ConsoleInteraction extends Books {
             System.out.println("7. Display all members");
             System.out.println("8. Search member details using member ID");
             System.out.println("9. Update member details");
-            System.out.println("10. Logout");
+            System.out.println("10. Add Admin");
+            System.out.println("11. Remove Admin");
+            System.out.println("12. Logout");
+            System.out.println("13. Exit");
 
             System.out.println("\nEnter your choice: ");
             Integer userInput = sc.nextInt();
             sc.nextLine(); // Consume the newline character
             switch(userInput) {
                 case 1:
-                    addBook(sc);
+                    addBookFromConsole();
                     break;
                 case 2:
-                    displayAllBooks();
+                    book.displayAllBooks();
                     break;
                 case 3:
-                    searchBookByName(sc);
+                    book.searchBookByName();
                     break;
                 case 4:
-                    searchBookByUniqueId(sc);
+                    book.searchBookByUniqueId();
                     break;
                 case 5:
-                    updateBookDetails(sc);
+                    book.updateBookDetails();
                     break;
                 case 6:
-                    deleteBook(sc);
+                    book.deleteBook();
                     break;
                 case 7:
                     member.displayAllMembers();
                     break;
                 case 8:
-                    member.searchMemberByMemberId(sc);
+                    member.searchMemberByMemberId();
                     break;
                 case 9:
-                    member.updateMemberDetails(sc);
+                    member.updateMemberDetails();
                     break;
                 case 10:
+                    addAdminFromConsole();
+                    break;
+                case 11:
+                    removeAdminFromConsole();
+                    break;
+                case 12:
                     System.out.println("Logging out...");
                     Main.enterTheApplication();
+                    return;
+                case 13:
+                    System.out.println("Exiting the application...");
                     return;
                 default:
                     System.out.println("Invalid option. Please select a valid option from the menu.");
@@ -248,12 +326,12 @@ public class ConsoleInteraction extends Books {
             sc.nextLine(); // Consume the invalid input
         }
         catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             System.out.println("An error occurred: " + e.getMessage());
         }
-        displayAdminMenu(sc, member); // Re-display the menu 
+        displayAdminMenu(member); // Re-display the menu 
     }
-    public void displayMemberMenu(Scanner sc, Members member) {
+    public void displayMemberMenu(Members member) {
         try {
             System.out.println("\nMember Menu:");
             System.out.println("1. Display all books");
@@ -262,29 +340,35 @@ public class ConsoleInteraction extends Books {
             System.out.println("4. Borrow a book");
             System.out.println("5. Return a book");
             System.out.println("6. Logout");
+            System.out.println("7. Exit");
 
             System.out.print("\nEnter your choice: ");
             Integer userInput = sc.nextInt();
             sc.nextLine(); // Consume the newline character
             switch(userInput) {
                 case 1:
-                    displayAllBooks();
+                    book.displayAllBooks();
                     break;
                 case 2:
-                    searchBookByName(sc);
+                    book.searchBookByName();
                     break;
                 case 3:
-                    searchBookByUniqueId(sc);
+                    book.searchBookByUniqueId();
                     break;
                 case 4:
-                    member.borrowBook(sc);
+                    member.borrowBook();
                     break;
                 case 5:
-                    member.returnBook(sc);
+                    member.returnBook();
                     break;
                 case 6:
                     System.out.println("Logging out...");
                     Main.enterTheApplication();
+                    return;
+                case 7:
+                    System.out.println("Exiting the application...");
+                    Main.storeData();
+                    System.exit(0);
                     return;
                 default:
                     System.out.println("Invalid option. Please select a valid option from the menu.");
@@ -292,11 +376,13 @@ public class ConsoleInteraction extends Books {
         }
         catch (InputMismatchException e) {
             System.out.println("Invalid input. Please enter a number corresponding to the menu options.");
+            sc.nextLine(); // Consume the invalid input
         }
         catch (Exception e) {
+            e.printStackTrace();
             System.out.println("An error occurred: " + e.getMessage());
         }
-        displayMemberMenu(sc, member); // Re-display the menu 
+        displayMemberMenu(member); // Re-display the menu 
     }
 
 }

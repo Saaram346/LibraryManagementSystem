@@ -43,11 +43,10 @@ Books:
 */
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import Library.Constants.BOOKS;
 
-public class Books {
+public class Books extends ConsoleInteraction {
     public String bookName;
     public String authorName;
     public String uniqueId;
@@ -57,20 +56,18 @@ public class Books {
     public String borrowedDate;
     public String dueDate;
     public String returnedDate;
-    public ArrayList<Members> borrowedByMembers;
-    public ArrayList<Members> reservedByMembers;
+    public ArrayList<Members> borrowedByMembers = new ArrayList<>();
+    public ArrayList<Members> reservedByMembers = new ArrayList<>();
 
     public static ArrayList<Books> booksList = new ArrayList<>();
-    ConsoleInteraction consoleInteraction;
     
     public Books() {}
 
-    public Books(String bookName, String authorName, String category, Boolean availability, Integer stock) {
+    public Books(String bookName, String authorName, String category, Integer stock) {
         setBookName(bookName);
         setAuthorName(authorName);
         setUniqueId("BOOKS" + System.currentTimeMillis() % 1_000_000_0);
         setCategory(category);
-        setAvailability(availability);
         setStock(stock);
         booksList.add(this);
         this.borrowedByMembers = new ArrayList<>();
@@ -91,7 +88,7 @@ public class Books {
         return this.authorName;
     }
 
-    private void setUniqueId(String uniqueId) {
+    public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
     public String getUniqueId() {
@@ -178,26 +175,31 @@ public class Books {
         }
     }
 
-    public void searchBookByName(Scanner sc) {
+    public void searchBookByName() {
         Boolean flag = true;
-        System.out.println("\nEnter a book name for search....");
-        String searchedName = sc.nextLine();
-        System.out.println("Searching....");
-        for(int i = 0; i < booksList.size(); i++) {
-            if(booksList.get(i).getBookName().contains(searchedName)) {
-                System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock());
-                flag = false;
+        while(true) {
+            System.out.println("\nEnter a book name for search....");
+            String searchedName = getBookNameFromConsole(false, true);
+            System.out.println("Searching....");
+            for(int i = 0; i < booksList.size(); i++) {
+                if(booksList.get(i).getBookName().contains(searchedName)) {
+                    System.out.println("Book Name: " + booksList.get(i).getBookName() + ", Author Name: " + booksList.get(i).getAuthorName() + ", Unique ID: " + booksList.get(i).getUniqueId() + ", Category: " + booksList.get(i).getCategory() + ", Availability: " + booksList.get(i).getAvailability() + ", Stock: " + booksList.get(i).getStock());
+                    flag = false;
+                }
             }
-        }
-        if(flag) {
-            System.out.println("No results found. Search with a different name.\n");
+            if(flag) {
+                System.out.println("No results found. Search with a different name.\n");
+            }
+            else {
+                break;
+            }
         }
     }
 
-    public void searchBookByUniqueId(Scanner sc) {
+    public void searchBookByUniqueId() {
         Boolean flag = true;
         System.out.println("\nEnter a Book ID for search....");
-        String bookId = consoleInteraction.getUniqueIdOfBook(sc);
+        String bookId = getUniqueIdOfBookFromConsole();
         System.out.println("Searching....");
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().contains(bookId)) {
@@ -210,9 +212,18 @@ public class Books {
         }
     }
 
-    public void deleteBook(Scanner sc) {
+    public Books getBookByUniqueId(String uniqueId) {
+        for(Books book : booksList) {
+            if(book.getUniqueId().equalsIgnoreCase(uniqueId)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    public void deleteBook() {
         System.out.println("\nEnter a Book ID to delete the book....");
-        String uniqueId = consoleInteraction.getUniqueIdOfBook(sc);
+        String uniqueId = getUniqueIdOfBookFromConsole();
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().equals(uniqueId)) {
                 System.out.println("Removing a book " + booksList.get(i).getBookName());
@@ -224,34 +235,34 @@ public class Books {
         System.out.println("No results found.\n");
     }
 
-    public void updateBookDetails(Scanner sc) {
+    public void updateBookDetails() {
         System.out.println("\nEnter a Book ID to update the book....");
-        String uniqueId = consoleInteraction.getUniqueIdOfBook(sc);
+        String uniqueId = getUniqueIdOfBookFromConsole();
         for(int i = 0; i < booksList.size(); i++) {
             if(booksList.get(i).getUniqueId().equals(uniqueId)) {
                 System.out.println("Current " + booksList.get(i).getBookName());
                 System.out.println("Enter a updated book name or press enter to skip: ");
-                String updatedBookName = sc.nextLine();
+                String updatedBookName = getBookNameFromConsole(false, false);
                 if(!updatedBookName.isEmpty()) {
                     booksList.get(i).setBookName(updatedBookName);
                     System.out.println("Book Name updated successfully");
                 }
                 System.out.println("Enter a updated author name or press enter to skip: ");
-                String updatedAuthorName = sc.nextLine();
+                String updatedAuthorName = getAuthorNameFromConsole(false);
                 if(!updatedAuthorName.isEmpty()) {
                     booksList.get(i).setAuthorName(updatedAuthorName);
                     System.out.println("Author Name updated successfully");
                 }
                 System.out.println("Enter a updated category or press enter to skip: ");
-                String updatedCategory = sc.nextLine();
+                String updatedCategory = getBookCategoryFromConsole(false);
                 if(!updatedCategory.isEmpty()) {
                     booksList.get(i).setCategory(updatedCategory);
                     System.out.println("Category updated successfully");
                 }
                 System.out.println("Enter a updated stock or press enter to skip: ");
-                String updatedStock = sc.nextLine();
-                if(!updatedStock.isEmpty() && updatedStock.matches("\\d+")) {
-                    booksList.get(i).setStock(Integer.valueOf(updatedStock));
+                Integer updatedStock = getBookStockFromConsole();
+                if(updatedStock != null) {
+                    booksList.get(i).setStock(updatedStock);
                     System.out.println("Stock updated successfully");
                 }
                 System.out.println("Book details updated successfully with details: ");
@@ -274,7 +285,7 @@ public class Books {
         return false;
     }
 
-    
+
     
 }
 

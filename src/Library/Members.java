@@ -1,20 +1,17 @@
 package Library;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import Library.Constants.MEMBERS;
 
-public class Members {
+public class Members extends ConsoleInteraction {
     public String memberName;
     private String password;
     public String memberId;
     public String phoneNumber;
     public String joiningDate;
-    public ArrayList<Books> borrowedBooks;
-    public ArrayList<Books> reservedBooks;
-
-    ConsoleInteraction consoleInteraction = new ConsoleInteraction();
+    public ArrayList<Books> borrowedBooks = new ArrayList<>();
+    public ArrayList<Books> reservedBooks = new ArrayList<>();
 
     public static ArrayList<Members> membersList = new ArrayList<>();
     public static ArrayList<Members> adminList = new ArrayList<>();
@@ -52,6 +49,9 @@ public class Members {
     }
     public void setJoiningDate() {
         this.joiningDate = java.time.LocalDate.now().toString();
+    }
+    public void setJoiningDate(String joiningDate) {
+        this.joiningDate = joiningDate;
     }
 
     public void addBorrowedBook(Books book) {
@@ -104,19 +104,19 @@ public class Members {
         }
     }
 
-    public void updateMemberDetails(Scanner sc) {
+    public void updateMemberDetails() {
         System.out.print("Enter the member ID to update details: ");
-        String memberId = sc.nextLine();
+        String memberId = getMemberIdFromConsole(true, false);
         for(int i = 0; i < membersList.size(); i++) {
             if(membersList.get(i).getMemberId().equals(memberId)) {
                 System.out.println("Enter a new member name or press enter to skip: ");
-                String updatedMemberName = sc.nextLine();
+                String updatedMemberName = getMemberNameFromConsole(false, false);
                 if(!updatedMemberName.isEmpty()) {
                     membersList.get(i).setMemberName(updatedMemberName);
                     System.out.println("Member Name updated successfully");
                 }
                 System.out.println("Enter a new phone number or press enter to skip: ");
-                String updatedPhoneNumber = sc.nextLine();
+                String updatedPhoneNumber = getPhoneNumberFromConsole(false, false);
                 if(!updatedPhoneNumber.isEmpty()) {
                     membersList.get(i).setPhoneNumber(updatedPhoneNumber);
                     System.out.println("Phone Number updated successfully");
@@ -135,9 +135,9 @@ public class Members {
         System.out.println("Member ID not found.");
     }
 
-    public void deleteMember(Scanner sc) {
+    public void deleteMember() {
         System.out.print("Enter the member ID to delete: ");
-        String memberId = sc.nextLine();
+        String memberId = getMemberIdFromConsole(true, false);
         for(int i = 0; i < membersList.size(); i++) {
             if(membersList.get(i).getMemberId().equals(memberId)) {
                 System.out.println("Removing member " + membersList.get(i).getMemberName());
@@ -149,9 +149,9 @@ public class Members {
         System.out.println("Member ID not found.\n");
     }
 
-    public Members searchMemberByMemberId(Scanner sc) {
+    public Members searchMemberByMemberId() {
         System.out.print("Enter the member ID to search: ");
-        String memberId = sc.nextLine();
+        String memberId = getMemberIdFromConsole(true, false);
         System.out.println("Search results for member ID '" + memberId + "':");
         Boolean found = false;
         for(Members member : membersList) {
@@ -163,6 +163,15 @@ public class Members {
         }
         if(!found) {
             System.out.println("No results found.\n");
+        }
+        return null;
+    }
+
+    public Members getMemberByMemberId(String memberId) {
+        for(Members member : membersList) {
+            if(member.getMemberId().equalsIgnoreCase(memberId)) {
+                return member;
+            }
         }
         return null;
     }
@@ -182,8 +191,33 @@ public class Members {
         return false;
     }
 
-    public void borrowBook(Scanner sc) {
-        String bookId = consoleInteraction.getUniqueIdOfBook(sc);
+    public void addAdmin(String memberName, String phoneNumber, String password) {
+        setMemberName(memberName);
+        setPhoneNumber(phoneNumber);
+        setJoiningDate();
+        setMemberId("ADMIN" + System.currentTimeMillis() % 1_000_000_0);
+        setPassword(password);
+        this.borrowedBooks = new ArrayList<>();
+        this.reservedBooks = new ArrayList<>();
+        adminList.add(this);
+    }
+
+    public void removeAdmin() {
+        System.out.print("Enter the Admin ID to delete: ");
+        String adminId = getMemberIdFromConsole(true, false);
+        for(int i = 0; i < adminList.size(); i++) {
+            if(adminList.get(i).getMemberId().equals(adminId)) {
+                System.out.println("Removing Admin " + adminList.get(i).getMemberName());
+                adminList.remove(i);
+                System.out.println("Admin deleted successfully...\n");
+                return;
+            }
+        }
+        System.out.println("Admin ID not found.\n");
+    }
+
+    public void borrowBook() {
+        String bookId = getUniqueIdOfBookFromConsole();
         for(Books book : Books.booksList) {
             if(book.getUniqueId().equals(bookId)) {
                 if(book.getAvailability()) {
@@ -203,13 +237,13 @@ public class Members {
             }
         }
         System.out.println("Book ID not found.");
-        if(ConsoleInteraction.userConfirmation(sc, "Do you want to search for another book?")) {
-            borrowBook(sc);
+        if(ConsoleInteraction.userConfirmation("Do you want to search for another book?")) {
+            borrowBook();
         }
     }
 
-    public void returnBook(Scanner sc) {
-        String bookId = consoleInteraction.getUniqueIdOfBook(sc);
+    public void returnBook() {
+        String bookId = getUniqueIdOfBookFromConsole();
         for(Books book : borrowedBooks) {
             if(book.getUniqueId().equals(bookId)) {
                 book.setReturnedDate(java.time.LocalDate.now().toString());
@@ -221,8 +255,8 @@ public class Members {
             }
         }
         System.out.println("You have not borrowed a book with that ID.");
-        if(ConsoleInteraction.userConfirmation(sc, "Do you want to search for another book?")) {
-            returnBook(sc);
+        if(ConsoleInteraction.userConfirmation("Do you want to search for another book?")) {
+            returnBook();
         }
     }
 }
